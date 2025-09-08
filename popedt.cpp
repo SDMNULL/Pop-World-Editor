@@ -41,15 +41,15 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst, char *szCmdLine,
 {
 	hInst = hInstance;
 
-	dwScreenWidth	= 640;
-	dwScreenHeight	= 480;
+	dwScreenWidth	= 1920;
+	dwScreenHeight	= 1080;
 	dwScreenDepth	= 32;
 	//guidDevice		= IID_IDirect3DHALDevice;
 	//strcpy(szDeviceName, "Direct3D HAL");
 	guidDevice		= IID_IDirect3DTnLHalDevice;
 	strcpy(szDeviceName, "Direct3D TnLHal");
 	fHwDevice		= true;
-	fFullScreen		= true;
+	fFullScreen		= false;
 
 	if (!InitializeUserFiles())
 	{

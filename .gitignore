@@ -38,7 +38,8 @@ build/
 .LSOverride
 
 # Icon must end with two \r
-Icon
+Icon
+
 
 # Thumbnails
 ._*
@@ -77,3 +78,6 @@ $RECYCLE.BIN/
 .VS
 *.VC.opendb
 *.VC.db
+
+# Resharper
+_ReSharper.Caches
