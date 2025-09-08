@@ -629,7 +629,7 @@ long EngineCreate()
 	else
 	{
 		dwStyle = WS_OVERLAPPED | WS_SYSMENU | WS_MINIMIZEBOX | WS_CAPTION;
-		RECT rc = {0, 0, dwScreenWidth, dwScreenHeight};
+		RECT rc = { 0, 0, static_cast<LONG>(dwScreenWidth), static_cast<LONG>(dwScreenHeight) };
 		AdjustWindowRectEx(&rc, dwStyle, false, GetWindowLong(hMainWnd, GWL_EXSTYLE));
 		w = rc.right - rc.left;
 		h = rc.bottom - rc.top;
@@ -657,7 +657,7 @@ long EngineCreate()
 	rs = lpDD->QueryInterface(IID_IDirect3D7, (void**)&lpD3D);
 	if FAILED(rs)
 	{
-		sprintf(str, SZ_ERR_ENGINE_QUERYINTERFACE_D3D);
+		sprintf(str, SZ_ERR_ENGINE_QUERYINTERFACE_D3D, rs);
 		LogWrite(str);
 		return rs;
 	}
