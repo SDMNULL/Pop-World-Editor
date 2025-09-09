@@ -9,6 +9,10 @@ http://alacn.dnsalias.org:8080/
 
 #include "std.h"
 #include "popedt.h"
+
+#include <ios>
+#include <iosfwd>
+
 #include "log.h"
 #include "commctrl.h"
 #include "pop.h"
@@ -76,6 +80,17 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst, char *szCmdLine,
 	InitializeDialogs();
 
 	HACCEL hAcell = LoadAccelerators(hInst, MAKEINTRESOURCE(IDR_ACCELERATOR));
+
+	AllocConsole();
+
+	FILE* fp;
+	freopen_s(&fp, "CONOUT$", "w", stdout);
+	freopen_s(&fp, "CONOUT$", "w", stderr);
+	freopen_s(&fp, "CONIN$", "r", stdin);
+
+	std::ios::sync_with_stdio();
+
+	setvbuf(stdout, nullptr, _IONBF, 0);
 
 _retry:
 	if FAILED(EngineCreate())
