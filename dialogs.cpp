@@ -212,9 +212,69 @@ void LevelSaveAs()
 	LockDialogs(false);
 }
 
+void ExportEngineGroundCSV()
+{
+	char filename[STR_SIZE], strInitDir[STR_SIZE];
+	GetUserDocumentsDirectory(strInitDir);
+	memset(filename, 0, sizeof(filename));
+
+	OPENFILENAME ofn;
+	memset(&ofn, 0, sizeof(ofn));
+	ofn.lStructSize = sizeof(ofn);
+	ofn.hwndOwner = hMainWnd;
+	ofn.lpstrDefExt = "csv";
+	ofn.lpstrTitle = "Export wEngineGround (CSV)";
+	ofn.lpstrFile = filename;
+	ofn.nMaxFile = sizeof(filename);
+	ofn.lpstrInitialDir = strInitDir;
+	ofn.lpstrFilter = "CSV (*.csv)\0*.csv\0All files\0*.*\0\0";
+	ofn.Flags = OFN_HIDEREADONLY | OFN_PATHMUSTEXIST | OFN_OVERWRITEPROMPT;
+
+	LockDialogs(true);
+	int f = GetSaveFileName(&ofn);
+	LockDialogs(false);
+	if (!f) return;
+
+	HANDLE h = CreateFileA(filename, GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS,
+		FILE_ATTRIBUTE_NORMAL, nullptr);
+	if (h == INVALID_HANDLE_VALUE) {
+		ModalMsg(SZ_EXPORT_HEIGHTMAP_FAILED, APPNAME, MB_ICONEXCLAMATION);
+		return;
+	}
+
+	char line[8192]; 
+	for (int z = 0; z < GROUND_Z_SIZE; ++z)
+	{
+		char* p = line;
+		char* end = line + sizeof(line);
+
+		for (int x = 0; x < GROUND_X_SIZE; ++x)
+		{
+			int written = _snprintf_s(p, (size_t)(end - p), _TRUNCATE,
+				(x == GROUND_X_SIZE - 1) ? "%u" : "%u,",
+				(unsigned)wEngineGround[z * 128 +x]);
+			if (written < 0) { p = end; break; }
+			p += written;
+		}
+
+		if (p <= end - 2) { *p++ = '\r'; *p++ = '\n'; }
+
+		DWORD toWrite = (DWORD)(p - line), wr = 0;
+		if (!WriteFile(h, line, toWrite, &wr, nullptr) || wr != toWrite) {
+			CloseHandle(h);
+			ModalMsg(SZ_EXPORT_HEIGHTMAP_FAILED, APPNAME, MB_ICONEXCLAMATION);
+			return;
+		}
+	}
+
+	CloseHandle(h);
+}
+
 
 void ExportHeightMap()
 {
+	ExportEngineGroundCSV();
+	return;
 	char filename[STR_SIZE],
 		 strInitDir[STR_SIZE];
 
